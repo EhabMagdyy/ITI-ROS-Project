@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00532200345472322 -2.89727839073439E-05 0.0205340312252205"
+        rpy="0 0 0" />
+      <mass
+        value="0.587519581152304" />
+      <inertia
+        ixx="0.000985881224021901"
+        ixy="6.35861994897702E-06"
+        ixz="1.18299056373326E-09"
+        iyy="0.00332617399533149"
+        iyz="4.68410909656308E-12"
+        izz="0.00429896157620389" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="left_wheel_link">
+    <inertial>
+      <origin
+        xyz="0.000226950266131398 -0.000822663546008351 -0.0141167375775528"
+        rpy="0 0 0" />
+      <mass
+        value="0.0419260450490871" />
+      <inertia
+        ixx="1.83755962185369E-05"
+        ixy="-8.74106100452391E-09"
+        ixz="1.04296609518235E-10"
+        iyy="1.84059038445016E-05"
+        iyz="-4.18293401143653E-10"
+        izz="3.09191345916328E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/left_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/left_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.07135 0.10579 -0.0264"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_wheel_link" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="right_wheel_link">
+    <inertial>
+      <origin
+        xyz="5.80252005439874E-05 0.000851419291212574 0.0141167375775615"
+        rpy="0 0 0" />
+      <mass
+        value="0.0419260450490687" />
+      <inertia
+        ixx="1.83733836962044E-05"
+        ixy="2.11059076155946E-09"
+        ixz="-1.86283567509692E-11"
+        iyy="1.84081163668218E-05"
+        iyz="-4.30697245532457E-10"
+        izz="3.09191345916282E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/right_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/right_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.07135 -0.10581 -0.0264"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_wheel_link" />
+    <axis
+      xyz="0 0 -1" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+   <link
+    name="right_caster_link">
+    <inertial>
+      <origin
+        xyz="0.16269 -0.0033135 0.059265"
+        rpy="0 0 0" />
+      <mass
+        value="0.033269" />
+      <inertia
+        ixx="3.951E-06"
+        ixy="-1.7081E-08"
+        ixz="8.3812E-08"
+        iyy="5.9564E-06"
+        iyz="1.1147E-08"
+        izz="3.3163E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/right_caster_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/right_caster_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_caster_joint"
+    type="fixed">
+    <origin
+      xyz="-0.0713498457201036 -0.105808252244339 -0.0264000000000171"
+      rpy="-1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_caster_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_caster_link">
+    <inertial>
+      <origin
+        xyz="0.16269 -0.0033135 -0.062773"
+        rpy="0 0 0" />
+      <mass
+        value="0.033269" />
+      <inertia
+        ixx="3.951E-06"
+        ixy="-1.7081E-08"
+        ixz="8.3812E-08"
+        iyy="5.9564E-06"
+        iyz="1.1147E-08"
+        izz="3.3163E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/left_caster_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://diff_robot_description/meshes/left_caster_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_caster_joint"
+    type="fixed">
+    <origin
+      xyz="-0.0713498457200881 0.105791747755655 -0.0263999999999989"
+      rpy="-1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_caster_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
