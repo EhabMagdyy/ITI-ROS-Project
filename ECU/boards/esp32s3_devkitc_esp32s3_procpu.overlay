@@ -1,0 +1,210 @@
+/*
+ * Robot Car ECU - Device Tree Overlay
+ * Board: ESP32-S3 DevKitC
+ *
+ * Pinout:
+ *   MOTOR_L_ENA  GPIO12  PWM  (LEDC CH0)
+ *   MOTOR_L_IN1  GPIO13  GPIO Output
+ *   MOTOR_L_IN2  GPIO14  GPIO Output
+ *   MOTOR_R_ENA  GPIO15  PWM  (LEDC CH1)
+ *   MOTOR_R_IN1  GPIO16  GPIO Output
+ *   MOTOR_R_IN2  GPIO17  GPIO Output
+ *   ENC_L_A      GPIO4   GPIO Interrupt (both edges)
+ *   ENC_L_B      GPIO5   GPIO Interrupt (both edges)
+ *   ENC_R_A      GPIO6   GPIO Interrupt (both edges)
+ *   ENC_R_B      GPIO7   GPIO Interrupt (both edges)
+ *   IMU_SDA      GPIO8   I2C0
+ *   IMU_SCL      GPIO9   I2C0
+ *   UART2_TX     GPIO20  UART2
+ *   UART2_RX     GPIO21  UART2
+ *   US_FRONT_TRIG GPIO35 GPIO Output (gpio1 pin 3)
+ *   US_FRONT_ECHO GPIO36 GPIO Input Capture ISR (gpio1 pin 4)
+ *   US_BACK_TRIG  GPIO37 GPIO Output (gpio1 pin 5)
+ *   US_BACK_ECHO  GPIO38 GPIO Input Capture ISR (gpio1 pin 6)
+ *   US_LEFT_TRIG  GPIO39 GPIO Output (gpio1 pin 7)
+ *   US_LEFT_ECHO  GPIO40 GPIO Input Capture ISR (gpio1 pin 8)
+ *   US_RIGHT_TRIG GPIO41 GPIO Output (gpio1 pin 9)
+ *   US_RIGHT_ECHO GPIO42 GPIO Input Capture ISR (gpio1 pin 10)
+ */
+
+#include <zephyr/dt-bindings/pinctrl/esp32s3-pinctrl.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pwm/pwm.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+/ {
+	aliases {
+		pwm-motor-left  = &pwm_motor_left;
+		pwm-motor-right = &pwm_motor_right;
+	};
+
+	/* PWM Motor Speed Nodes */
+	motors {
+		compatible = "pwm-leds";
+		pwm_motor_left: pwm_motor_left {
+			/* LEDC CH0 — GPIO12 — 1 kHz period (1,000,000 ns) */
+			pwms = <&ledc0 0 1000000 PWM_POLARITY_NORMAL>;
+		};
+		pwm_motor_right: pwm_motor_right {
+			/* LEDC CH1 — GPIO15 — 1 kHz period (1,000,000 ns) */
+			pwms = <&ledc0 1 1000000 PWM_POLARITY_NORMAL>;
+		};
+	};
+
+	/* Motor Direction GPIO (Outputs) */
+	motor_gpios {
+		compatible = "gpio-leds";
+		motor_l_in1: motor_l_in1 {
+			gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+			label = "Motor L IN1";
+		};
+		motor_l_in2: motor_l_in2 {
+			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+			label = "Motor L IN2";
+		};
+		motor_r_in1: motor_r_in1 {
+			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+			label = "Motor R IN1";
+		};
+		motor_r_in2: motor_r_in2 {
+			gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+			label = "Motor R IN2";
+		};
+	};
+
+	/* Encoder GPIO (Inputs, quadrature — both edges) */
+	encoder_gpios {
+		compatible = "gpio-keys";
+		enc_l_a: enc_l_a {
+			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+			label = "Encoder Left A";
+		};
+		enc_l_b: enc_l_b {
+			gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+			label = "Encoder Left B";
+		};
+		enc_r_a: enc_r_a {
+			gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+			label = "Encoder Right A";
+		};
+		enc_r_b: enc_r_b {
+			gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+			label = "Encoder Right B";
+		};
+	};
+
+	/* Ultrasonic Trigger GPIO (Outputs) */
+	us_trigs {
+		compatible = "gpio-leds";
+		us_front_trig: us_front_trig {
+			gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>; /* GPIO35 */
+			label = "US Front Trigger";
+		};
+		us_back_trig: us_back_trig {
+			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>; /* GPIO37 */
+			label = "US Back Trigger";
+		};
+		us_left_trig: us_left_trig {
+			gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>; /* GPIO39 */
+			label = "US Left Trigger";
+		};
+		us_right_trig: us_right_trig {
+			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>; /* GPIO41 */
+			label = "US Right Trigger";
+		};
+	};
+
+	/* Ultrasonic Echo GPIO (Inputs — both edges for input capture) */
+	us_echos {
+		compatible = "gpio-keys";
+		us_front_echo: us_front_echo {
+			gpios = <&gpio1 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* GPIO36 */
+			label = "US Front Echo";
+		};
+		us_back_echo: us_back_echo {
+			gpios = <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* GPIO38 */
+			label = "US Back Echo";
+		};
+		us_left_echo: us_left_echo {
+			gpios = <&gpio1 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* GPIO40 */
+			label = "US Left Echo";
+		};
+		us_right_echo: us_right_echo {
+			gpios = <&gpio1 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; /* GPIO42 */
+			label = "US Right Echo";
+		};
+	};
+};
+
+/* ─── Pin Control ─────────────────────────────────────────── */
+&pinctrl {
+	/* UART2: TX=GPIO20, RX=GPIO21 */
+	uart2_default: uart2_default {
+		group1 {
+			pinmux = <UART2_TX_GPIO20>, <UART2_RX_GPIO21>;
+		};
+	};
+	uart2_sleep: uart2_sleep {
+		group1 {
+			pinmux = <UART2_TX_GPIO20>, <UART2_RX_GPIO21>;
+		};
+	};
+
+	/* LEDC: CH0=GPIO12 (motor left), CH1=GPIO15 (motor right) */
+	ledc0_default: ledc0_default {
+		group1 {
+			pinmux = <LEDC_CH0_GPIO12>, <LEDC_CH1_GPIO15>;
+		};
+	};
+
+	/* I2C0: SDA=GPIO8, SCL=GPIO9 */
+	i2c0_default: i2c0_default {
+		group1 {
+			pinmux = <I2C0_SDA_GPIO8>, <I2C0_SCL_GPIO9>;
+			bias-pull-up;
+			drive-open-drain;
+			output-high;
+		};
+	};
+};
+
+/* ─── UART2 ───────────────────────────────────────────────── */
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart2_default>;
+	pinctrl-1 = <&uart2_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/* ─── LEDC (Motor PWM) ────────────────────────────────────── */
+&ledc0 {
+	pinctrl-0 = <&ledc0_default>;
+	pinctrl-names = "default";
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	/* Timer 0: shared by both motor channels */
+	channel0@0 {
+		reg = <0>;
+		timer = <0>;
+	};
+	channel1@1 {
+		reg = <1>;
+		timer = <0>;
+	};
+};
+
+/* ─── I2C0 (IMU — MPU6050 or similar) ───────────────────── */
+&i2c0 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_FAST>; /* 400 kHz */
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-names = "default";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	/* Add IMU child node here, e.g.:
+	 * mpu6050@68 { compatible = "invensense,mpu6050"; reg = <0x68>; ... };
+	 */
+};
