@@ -3,8 +3,19 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Dummy base_link  -->
+  <link name="base_link"/>
+
+  <!-- Chassis holds all SolidWorks geometry -->
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
   <link
-    name="base_link">
+    name="chassis_link">
     <inertial>
       <origin
         xyz="-0.00532200345472322 -2.89727839073439E-05 0.0205340312252205"
@@ -25,7 +36,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/base_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -39,7 +50,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/base_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -65,7 +76,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/left_wheel_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/left_wheel_link.STL" />
       </geometry>
       <material
         name="">
@@ -79,7 +90,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/left_wheel_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/left_wheel_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -90,14 +101,14 @@
       xyz="-0.07135 0.10579 -0.0264"
       rpy="-1.5708 0 0" />
     <parent
-      link="base_link" />
+      link="chassis_link" />
     <child
       link="left_wheel_link" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0 -1" />
     <dynamics
       damping="0.1"
-      friction="0.1" />
+      friction="2.0" />
   </joint>
   <link
     name="right_wheel_link">
@@ -121,7 +132,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/right_wheel_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/right_wheel_link.STL" />
       </geometry>
       <material
         name="">
@@ -135,7 +146,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/right_wheel_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/right_wheel_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -146,30 +157,30 @@
       xyz="-0.07135 -0.10581 -0.0264"
       rpy="-1.5708 0 0" />
     <parent
-      link="base_link" />
+      link="chassis_link" />
     <child
       link="right_wheel_link" />
     <axis
       xyz="0 0 -1" />
     <dynamics
-      damping="0.1"
-      friction="0.1" />
+      damping="1.1"
+      friction="2.0" />
   </joint>
-   <link
+  <link
     name="right_caster_link">
     <inertial>
       <origin
-        xyz="0.16269 -0.0033135 0.059265"
+        xyz="0.00268816148973561 -0.00203536418614769 0.00191349352759729"
         rpy="0 0 0" />
       <mass
-        value="0.033269" />
+        value="0.0332686534414054" />
       <inertia
-        ixx="3.951E-06"
-        ixy="-1.7081E-08"
-        ixz="8.3812E-08"
-        iyy="5.9564E-06"
-        iyz="1.1147E-08"
-        izz="3.3163E-06" />
+        ixx="3.95101603832686E-06"
+        ixy="8.38120688817775E-08"
+        ixz="1.70812071112867E-08"
+        iyy="3.31627423081446E-06"
+        iyz="-1.11469659665923E-08"
+        izz="5.95635417481321E-06" />
     </inertial>
     <visual>
       <origin
@@ -177,12 +188,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/right_caster_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/right_caster_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -191,7 +202,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/right_caster_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/right_caster_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -199,10 +210,10 @@
     name="right_caster_joint"
     type="fixed">
     <origin
-      xyz="-0.0713498457201036 -0.105808252244339 -0.0264000000000171"
-      rpy="-1.5707963267949 0 0" />
+      xyz="0.08865 -0.044508 -0.025"
+      rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="chassis_link" />
     <child
       link="right_caster_link" />
     <axis
@@ -212,17 +223,17 @@
     name="left_caster_link">
     <inertial>
       <origin
-        xyz="0.16269 -0.0033135 -0.062773"
+        xyz="0.00268816148974094 -0.00147315327391973 0.00191349352759895"
         rpy="0 0 0" />
       <mass
-        value="0.033269" />
+        value="0.0332686534414053" />
       <inertia
-        ixx="3.951E-06"
-        ixy="-1.7081E-08"
-        ixz="8.3812E-08"
-        iyy="5.9564E-06"
-        iyz="1.1147E-08"
-        izz="3.3163E-06" />
+        ixx="3.95101603832685E-06"
+        ixy="8.38120688817571E-08"
+        ixz="1.70812071113248E-08"
+        iyy="3.31627423081444E-06"
+        iyz="-1.11469659666131E-08"
+        izz="5.95635417481318E-06" />
     </inertial>
     <visual>
       <origin
@@ -230,12 +241,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/left_caster_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/left_caster_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="0.79216 0.81961 0.93333 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
@@ -244,7 +255,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://diff_robot_description/meshes/left_caster_link.STL" />
+          filename="file://$(find diff_robot_description)/meshes/left_caster_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -252,13 +263,28 @@
     name="left_caster_joint"
     type="fixed">
     <origin
-      xyz="-0.0713498457200881 0.105791747755655 -0.0263999999999989"
-      rpy="-1.5707963267949 0 0" />
+      xyz="0.08865 0.044508 -0.025"
+      rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="chassis_link" />
     <child
       link="left_caster_link" />
     <axis
       xyz="0 0 0" />
   </joint>
+
+<gazebo reference="left_wheel_link">
+  <mu1>100000000000000.0</mu1>
+  <mu2>100000000000000.0</mu2>
+  <kp>100000000000000</kp>
+  <kd>100</kd>
+</gazebo>
+
+<gazebo reference="right_wheel_link">
+  <mu1>100000000000000.0</mu1>
+  <mu2>100000000000000.0</mu2>
+  <kp>100000000000000</kp>
+  <kd>100</kd>
+</gazebo>
+
 </robot>
