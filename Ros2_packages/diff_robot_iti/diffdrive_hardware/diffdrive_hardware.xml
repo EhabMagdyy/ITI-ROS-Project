@@ -1,0 +1,11 @@
+<library path="diffdrive_hardware">
+  <class name="diffdrive_hardware/DiffDriveHardwareSystem"
+         type="diffdrive_hardware::DiffDriveHardwareSystem"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      A differential drive robot ros2_control hardware interface.
+      Fetches IMU and Encoder data from an MCU.
+      Commands Drive Motors through an MCU.
+    </description>
+  </class>
+</library>

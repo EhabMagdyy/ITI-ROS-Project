@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <xacro:arg name="use_mock_hardware" default="false"/>
+
   <!-- Need to double check-->
   <xacro:property name="wheel_separation" value="0.2116"/> 
   <xacro:property name="wheel_radius" value="0.0325"/>
@@ -9,10 +11,21 @@
   <!-- Real hardware / Mock for now :) -->
   <xacro:unless value="$(arg sim_mode)">
     <ros2_control name="RealRobot" type="system">
-   <hardware>
-      <plugin>mock_components/GenericSystem</plugin>
-      <param name="calculate_dynamics">true</param>
-          <param name="disable_commands">false</param>
+    <hardware>
+      <xacro:if value="$(arg use_mock_hardware)">
+        <plugin>mock_components/GenericSystem</plugin>
+        <param name="calculate_dynamics">true</param>
+        <param name="disable_commands">false</param>
+      </xacro:if>
+      <xacro:unless value="$(arg use_mock_hardware)">
+        <plugin>diffdrive_hardware/DiffDriveHardwareSystem</plugin>
+        <param name="left_wheel_name">left_wheel_joint</param>
+        <param name="right_wheel_name">right_wheel_joint</param>
+        <param name="serial_device">/dev/ttyUSB0</param>
+        <param name="baud_rate">115200</param>
+        <param name="enc_counts_per_rev">340</param>
+        <param name="imu_name">imu_sensor</param>
+      </xacro:unless>
     </hardware>
       <joint name="left_wheel_joint">
         <command_interface name="velocity">

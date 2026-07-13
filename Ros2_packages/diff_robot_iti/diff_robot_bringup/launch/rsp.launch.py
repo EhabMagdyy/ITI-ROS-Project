@@ -11,12 +11,14 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time')
+    use_mock_hardware = LaunchConfiguration('use_mock_hardware')
 
     pkg_path = os.path.join(get_package_share_directory('diff_robot_description'))
     xacro_file = os.path.join(pkg_path, 'urdf', 'robot.xacro')
     robot_description_config = Command([
         'xacro ', xacro_file,
-        ' sim_mode:=', use_sim_time
+        ' sim_mode:=', use_sim_time,
+        ' use_mock_hardware:=', use_mock_hardware
     ])
 
     params = {'robot_description': robot_description_config, 'use_sim_time': use_sim_time}
@@ -32,6 +34,11 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use sim time if true'
+        ),
+        DeclareLaunchArgument(
+            'use_mock_hardware',
+            default_value='false',
+            description='Use mock hardware plugin if true'
         ),
         node_robot_state_publisher
     ])
