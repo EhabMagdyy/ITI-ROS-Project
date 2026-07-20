@@ -2,7 +2,6 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-
   <!-- ==================== IMU ==================== -->
   <link name="imu_link">
     <inertial>
@@ -57,86 +56,63 @@
   </gazebo>
 
   <!-- ==================== LIDAR ==================== -->
-   <link
-    name="lidar_link">
+  <link name="lidar_link">
     <inertial>
-      <origin
-        xyz="-0.0014514 3.2754E-06 0.019293"
-        rpy="0 0 0" />
-      <mass
-        value="0.17546" />
-      <inertia
-        ixx="8.2171E-05"
-        ixy="1.6745E-07"
-        ixz="-3.7671E-06"
-        iyy="0.00010613"
-        iyz="8.5784E-09"
-        izz="0.00014061" />
+      <origin xyz="-0.0014514 3.2754E-06 0.019293" rpy="0 0 0"/>
+      <mass value="0.17546"/>
+      <inertia ixx="8.2171E-05" ixy="1.6745E-07" ixz="-3.7671E-06"
+               iyy="0.00010613" iyz="8.5784E-09" izz="0.00014061"/>
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
       <geometry>
-        <mesh
-          filename="file://$(find diff_robot_description)/meshes/lidar_link.STL" />
+        <mesh filename="file://$(find diff_robot_description)/meshes/lidar_link.STL"/>
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1"/>
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh
-          filename="file://$(find diff_robot_description)/meshes/lidar_link.STL" />
+        <mesh filename="file://$(find diff_robot_description)/meshes/lidar_link.STL"/>
       </geometry>
     </collision>
   </link>
-  <joint
-    name="lidar_joint"
-    type="fixed">
-    <origin
-      xyz="0.0990647710242247 0 0.0963999999999987"
-      rpy="0 0 0" />
-    <parent
-      link="chassis_link" />
-    <child
-      link="lidar_link" />
-    <axis
-      xyz="0 0 0" />
+
+  <joint name="lidar_joint" type="fixed">
+    <origin xyz="0.0990647710242247 0 0.0963999999999987" rpy="0 0 0"/>
+    <parent link="chassis_link"/>
+    <child link="lidar_link"/>
+    <axis xyz="0 0 0"/>
   </joint>
 
-   <gazebo reference="lidar_link">
-        <sensor name="laser" type="ray">
-            <pose> 0 0 0 0 0 0 </pose>
-            <visualize>true</visualize>
-            <update_rate>10</update_rate>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <min_angle>-3.14</min_angle>
-                        <max_angle>3.14</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.3</min>
-                    <max>12</max>
-                </range>
-            </ray>
-            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
-                <ros>
-                    <argument>~/out:=scan</argument>
-                </ros>
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_name>lidar_link</frame_name>
-            </plugin>
-        </sensor>
-    </gazebo>
+  <gazebo reference="lidar_link">
+    <sensor name="laser" type="ray">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <min_angle>-3.14</min_angle>
+            <max_angle>3.14</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>12</max>
+        </range>
+      </ray>
+      <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <argument>~/out:=scan</argument>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>lidar_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
 
 </robot>

@@ -3,66 +3,115 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
-from launch.actions import SetEnvironmentVariable
+
 
 def generate_launch_description():
 
+    pkg_bringup = get_package_share_directory('diff_robot_bringup')
 
-    # Robot state publisher with sim_time=true and ros2_control=true
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('diff_robot_bringup'), 'launch', 'rsp.launch.py'
-        )]), launch_arguments={'use_sim_time': 'true'}.items()
+            pkg_bringup,
+            'launch',
+            'rsp.launch.py'
+        )]),
+        launch_arguments={'use_sim_time': 'true', 'use_mock_hardware': 'false'}.items()
     )
 
-    # Gazebo params file
     gazebo_params_file = os.path.join(
-        get_package_share_directory('diff_robot_bringup'),
+        pkg_bringup,
         'config',
         'gazebo_params.yaml'
     )
 
-    # Gazebo
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py'
+            get_package_share_directory('gazebo_ros'),
+            'launch',
+            'gazebo.launch.py'
         )]),
         launch_arguments={
-        'verbose': 'true',
-        'extra_gazebo_args': '--ros-args --params-file ' + gazebo_params_file
+            'verbose': 'true',
+            'extra_gazebo_args': '--ros-args --params-file ' + gazebo_params_file
         }.items()
     )
 
-    # Spawn robot
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
         arguments=['-topic', 'robot_description',
                    '-entity', 'my_robot',
-                    '-z', '10'],
+                   '-z', '0.1'],
         output='screen'
     )
 
-    # Controller spawners
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_cont"],
+    controller_params_file = os.path.join(
+        pkg_bringup,
+        'config',
+        'controllers.yaml'
     )
 
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_broad"],
+    controller_manager = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[
+            {'use_sim_time': True},
+            controller_params_file
+        ],
+        output='screen'
+    )
+
+    delayed_controller_manager = TimerAction(
+        period=5.0,
+        actions=[controller_manager]
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster'],
+        output='screen'
+    )
+
+    diff_drive_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['diff_cont'],
+        output='screen'
+    )
+
+    delayed_spawners = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=controller_manager,
+            on_start=[joint_state_broadcaster_spawner, diff_drive_spawner],
+        )
+    )
+
+    # EKF for Gazebo (uses Gazebo IMU topic)
+    gazebo_ekf_config_file = os.path.join(
+        pkg_bringup,
+        'config',
+        'gazebo_ekf.yaml'
+    )
+
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[gazebo_ekf_config_file],
+        remappings=[('/odometry/filtered', '/odom')]
     )
 
     return LaunchDescription([
         rsp,
         gazebo,
         spawn_entity,
-        diff_drive_spawner,
-        joint_broad_spawner,
+        delayed_controller_manager,
+        delayed_spawners,
+        ekf_node
     ])
